@@ -1,8 +1,9 @@
 import { Container, CssBaseline, CssVarsProvider, Stack } from "@mui/joy";
 import { ServerContextProvider } from "./ServerProvider/ServerContext";
 import { createHashRouter, RouterProvider } from "react-router-dom";
-import { MainPage } from "./app/page";
-import RoomPage from "./app/[id]/page";
+import { MainPage } from "./app/MainPage";
+import RoomPage from "./app/[id]/RoomPage";
+import { DisconnectedPage } from "./app/DisconnectedPage";
 
 const router = createHashRouter([
   {
@@ -12,6 +13,10 @@ const router = createHashRouter([
   {
     path: ":roomId",
     element: <RoomPage />,
+  },
+  {
+    path: "disconnected",
+    element: <DisconnectedPage />,
   },
 ]);
 

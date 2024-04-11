@@ -1,10 +1,12 @@
 import { z } from "zod";
 
-const allowedVoteSchema = z.string();
+const allowedVoteSchema = z.number();
 const userRoleSchema = z.union([z.literal("player"), z.literal("spectator")]);
 const spectatorSchema = z.object({
   name: z.string(),
 });
+
+export type UserRole = z.infer<typeof userRoleSchema>;
 
 const playerSchema = z.object({
   name: z.string(),
@@ -16,7 +18,7 @@ const playerSchema = z.object({
 const voteClientAction = z.object({
   type: z.literal("vote"),
   payload: z.object({
-    voteValue: z.string(),
+    voteValue: allowedVoteSchema,
   }),
 });
 
@@ -67,7 +69,7 @@ export const clientActionSchema = z.discriminatedUnion("type", [
 ]);
 
 export type ClientAction = z.infer<typeof clientActionSchema>;
-export function createVoteClientActionMessage(voteValue: string): ClientAction {
+export function createVoteClientActionMessage(voteValue: number): ClientAction {
   return {
     type: "vote",
     payload: {

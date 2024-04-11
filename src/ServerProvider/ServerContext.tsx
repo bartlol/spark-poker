@@ -11,7 +11,7 @@ let peerClient: Peer | null = null;
 let serverState: AppState = {
   spectators: {},
   players: {},
-  allowedVotes: ["1", "2", "666"],
+  allowedVotes: [1, 2],
   votingInProgress: true,
 };
 let connections: DataConnection[] = [];
@@ -145,7 +145,8 @@ function setNewState(state: AppState) {
   });
 }
 
-const runServer = (id: string) => {
+const runServer = (id: string, allowedValues: number[]) => {
+  serverState.allowedVotes = allowedValues;
   if (peerClient !== null) {
     return;
   }
@@ -195,7 +196,9 @@ const runServer = (id: string) => {
   });
 };
 
-export const ServerContext = createContext<((id: string) => void) | null>(null);
+export const ServerContext = createContext<
+  ((id: string, values: number[]) => void) | null
+>(null);
 
 type Props = {
   children: ReactNode;

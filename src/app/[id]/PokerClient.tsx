@@ -1,18 +1,38 @@
-import { Button, Card, Stack, Typography } from "@mui/joy";
+import {
+  Button,
+  Card,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Input,
+  Stack,
+  Typography,
+} from "@mui/joy";
 import { useCallback, useState } from "react";
 import { PokerGame } from "./PokerGame";
 import {
   AppState,
+  UserRole,
   appStateSchema,
   createEnterGameActionMessage,
 } from "../../ServerProvider/messages";
 import { OnDataHandler, useConnect } from "../../messages/usePeerClient";
+import { Controller, useForm } from "react-hook-form";
+import { NewPlayerInput, newPlayerSchema } from "../../inputSchemas/newPlayer";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { InfoOutlined } from "@mui/icons-material";
 
 type Props = {
   serverId: string;
 };
 
 export const PokerClient = ({ serverId }: Props) => {
+  const { handleSubmit, control } = useForm<NewPlayerInput>({
+    defaultValues: {
+      name: "",
+    },
+    resolver: zodResolver(newPlayerSchema),
+  });
   const [appState, setAppState] = useState<AppState | null>(null);
   const onDataHandler: OnDataHandler = useCallback((data) => {
     console.log("Client received", data);
@@ -21,7 +41,6 @@ export const PokerClient = ({ serverId }: Props) => {
   }, []);
 
   const [chosenName, setChosenName] = useState<string>("");
-  const [typedInName, setTypedInName] = useState<string>("");
   const connection = useConnect(serverId, onDataHandler);
   const connected = connection.current !== null;
   const nameChosen = chosenName !== "";
@@ -36,29 +55,43 @@ export const PokerClient = ({ serverId }: Props) => {
     );
   }
 
+  const onSubmit = (role: UserRole) => (data: NewPlayerInput) => {
+    connection.current?.send(createEnterGameActionMessage(data.name, role));
+    setChosenName(data.name);
+  };
   return (
-    <Stack alignContent={"center"}>
+    <Stack component={"form"} alignContent={"center"}>
       <Card>
-        <Typography>Choose your name</Typography>
-        <input onChange={(e) => setTypedInName(e.target.value)} />
+        <Typography level="h3">Join room</Typography>
+        <Controller
+          control={control}
+          name="name"
+          render={({ field, fieldState }) => (
+            <FormControl error={fieldState.invalid}>
+              <FormLabel>Name</FormLabel>
+              <Input
+                error={fieldState.invalid}
+                onChange={field.onChange}
+                value={field.value}
+              />
+              {fieldState.invalid && (
+                <FormHelperText>
+                  <InfoOutlined />
+                  {fieldState.error?.message}
+                </FormHelperText>
+              )}
+            </FormControl>
+          )}
+        />
+
         <Button
-          onClick={() => {
-            connection.current?.send(
-              createEnterGameActionMessage(typedInName, "player")
-            );
-            setChosenName(typedInName);
-          }}
+          onClick={handleSubmit(onSubmit("player"))}
           loading={!connected && nameChosen}
         >
           Join as Player
         </Button>
         <Button
-          onClick={() => {
-            connection.current?.send(
-              createEnterGameActionMessage(typedInName, "spectator")
-            );
-            setChosenName(typedInName);
-          }}
+          onClick={handleSubmit(onSubmit("spectator"))}
           loading={!connected && nameChosen}
           variant="soft"
         >
