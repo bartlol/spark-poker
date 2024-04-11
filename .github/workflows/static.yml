@@ -38,7 +38,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Build without compiler checks
-        run: npm run build-without-compiler-checks
+        run: npm run build
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
