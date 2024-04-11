@@ -4,16 +4,19 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { MainPage } from "./app/page";
 import RoomPage from "./app/[id]/page";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <MainPage />,
-  },
-  {
-    path: ":roomId",
-    element: <RoomPage />,
-  },
-]);
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <MainPage />,
+    },
+    {
+      path: ":roomId",
+      element: <RoomPage />,
+    },
+  ],
+  { basename: "/spark-poker/" }
+);
 
 export const App = () => {
   return (
