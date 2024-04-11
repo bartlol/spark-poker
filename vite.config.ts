@@ -7,5 +7,5 @@ export default defineConfig({
   server: {
     host: "127.0.0.1",
   },
-  base: "/spark-poker/",
+  base: "/spark-poker",
 });

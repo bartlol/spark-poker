@@ -4,19 +4,16 @@ import { createHashRouter, RouterProvider } from "react-router-dom";
 import { MainPage } from "./app/page";
 import RoomPage from "./app/[id]/page";
 
-const router = createHashRouter(
-  [
-    {
-      path: "/",
-      element: <MainPage />,
-    },
-    {
-      path: ":roomId",
-      element: <RoomPage />,
-    },
-  ],
-  { basename: "/spark-poker/" }
-);
+const router = createHashRouter([
+  {
+    path: "/",
+    element: <MainPage />,
+  },
+  {
+    path: ":roomId",
+    element: <RoomPage />,
+  },
+]);
 
 export const App = () => {
   return (
