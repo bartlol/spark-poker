@@ -1,6 +1,6 @@
 import { Card, Stack, Typography } from "@mui/joy";
 import { PlayerAvatar } from "./PlayerAvatar";
-import { AppState } from "../../ServerProvider/messages";
+import { AppState } from "../../communication/messages";
 
 type Props = {
   players: AppState["players"];

@@ -15,8 +15,8 @@ import {
   UserRole,
   appStateSchema,
   createEnterGameActionMessage,
-} from "../../ServerProvider/messages";
-import { OnDataHandler, useConnect } from "../../messages/usePeerClient";
+} from "../../communication/messages";
+import { OnDataHandler, useConnect } from "../../hooks/usePeerClient";
 import { Controller, useForm } from "react-hook-form";
 import { NewPlayerInput, newPlayerSchema } from "../../inputSchemas/newPlayer";
 import { zodResolver } from "@hookform/resolvers/zod";

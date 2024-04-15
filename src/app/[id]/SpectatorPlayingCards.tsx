@@ -1,5 +1,5 @@
 import { Button, Stack } from "@mui/joy";
-import { AppState } from "../../ServerProvider/messages";
+import { AppState } from "../../communication/messages";
 
 type Props = {
   appState: AppState;

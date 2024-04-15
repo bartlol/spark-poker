@@ -6,7 +6,7 @@ import {
   ClientAction,
   createClearVoteClientActionMessage,
   createVoteClientActionMessage,
-} from "../../ServerProvider/messages";
+} from "../../communication/messages";
 
 type Props = {
   appState: AppState;

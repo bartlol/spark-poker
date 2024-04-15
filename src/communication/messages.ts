@@ -13,8 +13,6 @@ const playerSchema = z.object({
   currentVote: allowedVoteSchema.nullable(),
 });
 
-// ACTIONS THAT CAN BE SEND TO SERVER
-
 const voteClientAction = z.object({
   type: z.literal("vote"),
   payload: z.object({
@@ -129,7 +127,6 @@ export function createRequestStateActionMessage(): ClientAction {
   };
 }
 
-//  SERVER ALWAYS RESPONDS WITH THE MOST RECENT STATE
 export const appStateSchema = z.object({
   spectators: z.record(z.string(), spectatorSchema),
   players: z.record(z.string(), playerSchema),

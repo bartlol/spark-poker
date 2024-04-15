@@ -19,8 +19,8 @@ import {
   createNewVotingActionMessage,
   createRevealVotesActionMessage,
   createChangeRoleActionMessage,
-} from "../../ServerProvider/messages";
-import { CopyToClipboard } from "../../CopyToClipboard";
+} from "../../communication/messages";
+import { CopyToClipboard } from "./CopyToClipboard";
 import { useCallback } from "react";
 
 type Props = {
@@ -47,49 +47,50 @@ export const PokerGame = ({ appState, sendMessage, myId }: Props) => {
 
   return (
     <>
-      {/* <Stack direction="row-reverse"> */}
-      {/* </Stack> */}
-
       <CopyToClipboard />
       <Stack gap={1} alignItems={"center"}>
         <Sheet
           variant="soft"
-          color="neutral"
+          color="warning"
           sx={{
             p: 1,
-            borderRadius: 4,
+            mb: 1,
+            borderRadius: 8,
+            minWidth: 256,
           }}
         >
-          <Typography>Spectators</Typography>
-          <Stack direction="row" gap={1} justifyContent={"space-evenly"}>
-            {Object.entries(appState.spectators).map(([id, spectator]) => (
-              <SpectatorAvatar
-                key={id}
-                user={spectator}
-                isActive={id === myId}
-              />
-            ))}
-            {iAmPlayer && (
-              <Tooltip title={"Sit as spectator"}>
-                <IconButton
-                  variant="soft"
-                  color="warning"
-                  sx={{
-                    height: 80,
-                    px: 2,
-                    borderRadius: 100,
-                  }}
-                  onClick={() => {
-                    sendMessage(createChangeRoleActionMessage("spectator"));
-                  }}
-                >
-                  <AddIcon />
-                </IconButton>
-              </Tooltip>
-            )}
+          <Stack alignItems={"center"} gap={1}>
+            <Typography level="h4">Spectators</Typography>
+            <Stack direction="row" gap={1} justifyContent={"space-evenly"}>
+              {Object.entries(appState.spectators).map(([id, spectator]) => (
+                <SpectatorAvatar
+                  key={id}
+                  user={spectator}
+                  isActive={id === myId}
+                />
+              ))}
+              {iAmPlayer && (
+                <Tooltip title={"Sit as spectator"}>
+                  <IconButton
+                    variant="soft"
+                    color="warning"
+                    sx={{
+                      height: 80,
+                      px: 2,
+                      borderRadius: 100,
+                    }}
+                    onClick={() => {
+                      sendMessage(createChangeRoleActionMessage("spectator"));
+                    }}
+                  >
+                    <AddIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </Stack>
           </Stack>
         </Sheet>
-        <Stack sx={{ p: 1 }} gap={1}>
+        <Stack sx={{ p: 1 }} gap={2}>
           <Stack direction="row" gap={1} justifyContent={"space-evenly"}>
             {players.length < 2 ? (
               <DummyPlayerAvatar />
@@ -112,12 +113,16 @@ export const PokerGame = ({ appState, sendMessage, myId }: Props) => {
             sx={{
               display: "flex",
               alignItems: "center",
-              py: 4,
-              minWidth: 256 + 32,
+              py: 2,
+              minWidth: 256 + 64,
             }}
           >
             <Typography level="h4">SparkPoker</Typography>
-            {appState.votingInProgress ? "Pick your cards" : "Start new voting"}
+            <Typography level="body-lg">
+              {appState.votingInProgress
+                ? "Pick your cards"
+                : "Start new voting"}
+            </Typography>
             <Button
               variant={allVoted ? "solid" : "soft"}
               sx={{

@@ -1,5 +1,5 @@
 import { Box, Sheet, Stack, Typography } from "@mui/joy";
-import { AppState } from "../../ServerProvider/messages";
+import { AppState } from "../../communication/messages";
 
 type Props = {
   player: AppState["players"][number];

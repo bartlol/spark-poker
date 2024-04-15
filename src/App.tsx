@@ -1,5 +1,5 @@
 import { Container, CssBaseline, CssVarsProvider, Stack } from "@mui/joy";
-import { ServerContextProvider } from "./ServerProvider/ServerContext";
+import { ServerContextProvider } from "./communication/ServerContext";
 import { createHashRouter, RouterProvider } from "react-router-dom";
 import { MainPage } from "./app/MainPage";
 import RoomPage from "./app/[id]/RoomPage";

@@ -1,6 +1,6 @@
 import { Card, Stack, Typography } from "@mui/joy";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-import { AppState } from "../../ServerProvider/messages";
+import { AppState } from "../../communication/messages";
 type Props = {
   user: AppState["spectators"][number];
   isActive: boolean;

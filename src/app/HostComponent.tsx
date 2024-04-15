@@ -9,7 +9,7 @@ import {
 } from "@mui/joy";
 import { useContext } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { ServerContext } from "../ServerProvider/ServerContext";
+import { ServerContext } from "../communication/ServerContext";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
