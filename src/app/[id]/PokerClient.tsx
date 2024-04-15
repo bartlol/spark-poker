@@ -1,6 +1,7 @@
 import {
   Button,
   Card,
+  CircularProgress,
   FormControl,
   FormHelperText,
   FormLabel,
@@ -8,7 +9,7 @@ import {
   Stack,
   Typography,
 } from "@mui/joy";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { PokerGame } from "./PokerGame";
 import {
   AppState,
@@ -16,20 +17,29 @@ import {
   appStateSchema,
   createEnterGameActionMessage,
 } from "../../communication/messages";
-import { OnDataHandler, useConnect } from "../../hooks/usePeerClient";
+import {
+  OnCloseHandler,
+  OnDataHandler,
+  OnErrorHandler,
+  OnOpenHandler,
+  useConnect,
+} from "../../hooks/usePeerClient";
 import { Controller, useForm } from "react-hook-form";
 import { NewPlayerInput, newPlayerSchema } from "../../inputSchemas/newPlayer";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InfoOutlined } from "@mui/icons-material";
 import { usePersistentPlayerName } from "../../hooks/usePersistentPlayerName";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   serverId: string;
 };
 
 export const PokerClient = ({ serverId }: Props) => {
-  const { playerName, persistPlayerName } = usePersistentPlayerName();
+  const navigate = useNavigate();
+  const [connected, setConnected] = useState(false);
 
+  const { playerName, persistPlayerName } = usePersistentPlayerName();
   const { handleSubmit, control } = useForm<NewPlayerInput>({
     defaultValues: {
       name: playerName,
@@ -42,30 +52,53 @@ export const PokerClient = ({ serverId }: Props) => {
     const newState = appStateSchema.parse(data);
     setAppState(newState);
   }, []);
-
+  const onErrorHandler: OnErrorHandler = useCallback((err) => {
+    console.warn("Error event in connection", err);
+  }, []);
+  const onCloseHandler: OnCloseHandler = useCallback(() => {
+    setConnected(false);
+    navigate("/disconnected");
+  }, [navigate]);
+  const onOpenHandler: OnOpenHandler = useCallback(() => {
+    setConnected(true);
+  }, []);
   const [chosenName, setChosenName] = useState<string>("");
-  const connection = useConnect(serverId, onDataHandler);
-  const connected = connection.current !== null;
+  const [chosenRole, setRole] = useState<UserRole | null>(null);
+  const connection = useConnect(
+    serverId,
+    onDataHandler,
+    onErrorHandler,
+    onCloseHandler,
+    onOpenHandler
+  );
+
   const nameChosen = chosenName !== "";
 
   const onSubmit = (role: UserRole) => (data: NewPlayerInput) => {
     persistPlayerName(data.name);
-    connection.current?.send(createEnterGameActionMessage(data.name, role));
+    setRole(role);
+    // connection?.send(createEnterGameActionMessage(data.name, role));
     setChosenName(data.name);
+    console.log(connected, nameChosen, chosenRole);
   };
+
+  useEffect(() => {
+    if (connected && nameChosen && chosenRole !== null) {
+      connection?.send(createEnterGameActionMessage(playerName, chosenRole));
+    }
+  }, [connected, nameChosen, chosenRole]);
 
   if (connected && nameChosen && appState) {
     return (
       <PokerGame
         appState={appState!}
-        myId={connection.current!.label}
-        sendMessage={(data) => connection.current?.send(data)}
+        myId={connection!.label}
+        sendMessage={(data) => connection?.send(data)}
       />
     );
   }
-
   return (
-    <Stack alignContent={"center"}>
+    <Stack justifyContent={"space-evenly"} flex={1}>
       <Card>
         <Typography level="h3">Join room</Typography>
         <Controller
@@ -88,20 +121,24 @@ export const PokerClient = ({ serverId }: Props) => {
             </FormControl>
           )}
         />
-
-        <Button
-          onClick={handleSubmit(onSubmit("player"))}
-          loading={!connected && nameChosen}
-        >
-          Join as Player
-        </Button>
-        <Button
-          onClick={handleSubmit(onSubmit("spectator"))}
-          loading={!connected && nameChosen}
-          variant="soft"
-        >
-          Join as Spectator
-        </Button>
+        {nameChosen && !connected ? (
+          <Stack alignItems={"center"}>
+            <CircularProgress />
+            <Typography level="body-md">Joining as {chosenRole}</Typography>
+          </Stack>
+        ) : (
+          <>
+            <Button onClick={handleSubmit(onSubmit("player"))}>
+              Join as Player
+            </Button>
+            <Button
+              onClick={handleSubmit(onSubmit("spectator"))}
+              variant="soft"
+            >
+              Join as Spectator
+            </Button>
+          </>
+        )}
       </Card>
     </Stack>
   );

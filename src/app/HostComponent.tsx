@@ -5,6 +5,7 @@ import {
   FormLabel,
   Input,
   Sheet,
+  Stack,
   Typography,
 } from "@mui/joy";
 import { useContext } from "react";
@@ -46,45 +47,47 @@ export const HostComponent = () => {
 
   console.log(formState);
   return (
-    <Sheet
-      variant="outlined"
-      sx={{
-        p: 4,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: 3,
-        borderRadius: 8,
-      }}
-    >
-      <Typography level="h1">SparkPoker</Typography>
+    <Stack justifyContent={"space-evenly"} flex={1}>
+      <Sheet
+        variant="outlined"
+        sx={{
+          p: 4,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 3,
+          borderRadius: 8,
+        }}
+      >
+        <Typography level="h1">SparkPoker</Typography>
 
-      <Controller
-        control={control}
-        name="values"
-        render={({ field, fieldState }) => (
-          <FormControl error={fieldState.invalid}>
-            <FormLabel>Deck values</FormLabel>
-            <Input
-              error={fieldState.invalid}
-              onChange={field.onChange}
-              value={field.value}
-            />
-            <FormHelperText
-              sx={{
-                color: "primary",
-              }}
-            >
-              <InfoOutlinedIcon fontSize="small" sx={{ mr: 1 }} />
-              Enter numbers separated by commas.
-            </FormHelperText>
-          </FormControl>
-        )}
-      />
+        <Controller
+          control={control}
+          name="values"
+          render={({ field, fieldState }) => (
+            <FormControl error={fieldState.invalid}>
+              <FormLabel>Deck values</FormLabel>
+              <Input
+                error={fieldState.invalid}
+                onChange={field.onChange}
+                value={field.value}
+              />
+              <FormHelperText
+                sx={{
+                  color: "primary",
+                }}
+              >
+                <InfoOutlinedIcon fontSize="small" sx={{ mr: 1 }} />
+                Enter numbers separated by commas.
+              </FormHelperText>
+            </FormControl>
+          )}
+        />
 
-      <Button onClick={handleSubmit(onSubmit, onError)} size="lg">
-        Create game
-      </Button>
-    </Sheet>
+        <Button onClick={handleSubmit(onSubmit, onError)} size="lg">
+          Create game
+        </Button>
+      </Sheet>
+    </Stack>
   );
 };

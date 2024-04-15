@@ -7,13 +7,17 @@ import {
 } from "./messages";
 import { gameStateReducer } from "./gameStateReducer";
 
+function getInitialState(): AppState {
+  return {
+    spectators: {},
+    players: {},
+    allowedVotes: [],
+    votingInProgress: true,
+  };
+}
+
 let peerClient: Peer | null = null;
-let serverState: AppState = {
-  spectators: {},
-  players: {},
-  allowedVotes: [1, 2],
-  votingInProgress: true,
-};
+let serverState: AppState = getInitialState();
 let connections: DataConnection[] = [];
 
 function setNewState(state: AppState) {
@@ -21,23 +25,28 @@ function setNewState(state: AppState) {
   connections.forEach((connection) => {
     const message = serverState;
     connection.send(message);
-    console.log("Sent: ", JSON.stringify(message));
   });
 }
 
+function resetServer() {
+  connections.forEach((connection) => connection.close());
+  connections = [];
+  peerClient?.disconnect();
+  peerClient?.destroy();
+  peerClient = null;
+  serverState = getInitialState();
+}
+
 const runServer = (id: string, allowedValues: number[]) => {
-  serverState.allowedVotes = allowedValues;
-  if (peerClient !== null) {
-    return;
-  }
+  resetServer();
   peerClient = new Peer(id);
-  peerClient.on("open", () => console.log("PeerClient onOpen event"));
 
-  peerClient.on("error", (err) => console.log("PeerClient onError event", err));
-
-  console.log("Created client:", peerClient);
+  serverState.allowedVotes = allowedValues;
+  peerClient.on("open", () => console.log("Server onOpen event"));
+  peerClient.on("error", (err) => console.log("Server onError event", err));
+  console.log("Created server:", peerClient);
   peerClient.on("connection", (newConnection) => {
-    console.log("NEW CONNECTION HANDLING!");
+    console.log("Server onConnection event", newConnection);
     const connectionId = newConnection.label;
     connections.push(newConnection);
     newConnection.on("close", () => {
@@ -72,7 +81,7 @@ const runServer = (id: string, allowedValues: number[]) => {
       setNewState(newState);
     });
     console.log("runServer", connections, connections.length);
-    console.log("NEW CONNECTION HANDLING DONE!!!!!");
+    console.log("Server on connection finished");
   });
 };
 

@@ -46,9 +46,9 @@ export const PokerGame = ({ appState, sendMessage, myId }: Props) => {
   );
 
   return (
-    <>
-      <CopyToClipboard />
-      <Stack gap={1} alignItems={"center"}>
+    <Stack gap={1} alignItems={"center"} flex={1} py={1}>
+      <Stack gap={2}>
+        <CopyToClipboard />
         <Sheet
           variant="soft"
           color="warning"
@@ -90,87 +90,87 @@ export const PokerGame = ({ appState, sendMessage, myId }: Props) => {
             </Stack>
           </Stack>
         </Sheet>
-        <Stack sx={{ p: 1 }} gap={2}>
-          <Stack direction="row" gap={1} justifyContent={"space-evenly"}>
-            {players.length < 2 ? (
-              <DummyPlayerAvatar />
-            ) : (
-              players.map(([id, user], i) =>
-                i % 2 ? (
-                  <PlayerAvatar
-                    key={id}
-                    player={user}
-                    isActive={id === myId}
-                    isRevealed={!appState.votingInProgress}
-                  />
-                ) : null
-              )
-            )}
-          </Stack>
-          <Card
-            variant="soft"
-            color="success"
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              py: 2,
-              minWidth: 256 + 64,
-            }}
-          >
-            <Typography level="h4">SparkPoker</Typography>
-            <Typography level="body-lg">
-              {appState.votingInProgress
-                ? "Pick your cards"
-                : "Start new voting"}
-            </Typography>
-            <Button
-              variant={allVoted ? "solid" : "soft"}
-              sx={{
-                transition: "transform 0.2s ease 0s",
-                transform: allVoted ? "scale(1.15)" : "scale(1)",
-              }}
-              onClick={
-                appState.votingInProgress ? handleRevealVoting : handleNewVoting
-              }
-            >
-              {appState.votingInProgress ? "Reveal Votes" : "New Voting"}
-            </Button>
-          </Card>
-
-          <Stack direction="row" gap={1} justifyContent={"space-evenly"}>
-            {players.map(([id, user], i) =>
-              i % 2 ? null : (
+      </Stack>
+      <Stack gap={3}>
+        <Stack direction="row" gap={1} justifyContent={"space-evenly"}>
+          {players.length < 2 ? (
+            <DummyPlayerAvatar />
+          ) : (
+            players.map(([id, user], i) =>
+              i % 2 ? (
                 <PlayerAvatar
                   key={id}
                   player={user}
                   isActive={id === myId}
                   isRevealed={!appState.votingInProgress}
                 />
-              )
-            )}
-            {!iAmPlayer && (
-              <Box>
-                <Tooltip title={"Sit as player"}>
-                  <IconButton
-                    variant="soft"
-                    color="primary"
-                    sx={{
-                      height: 96,
-                      px: 2,
-                      borderRadius: 100,
-                    }}
-                    onClick={() => {
-                      sendMessage(createChangeRoleActionMessage("player"));
-                    }}
-                  >
-                    <AddIcon />
-                  </IconButton>
-                </Tooltip>
-                <Box sx={{ height: 128 - 96, visibility: "hidden" }} />
-              </Box>
-            )}
-          </Stack>
+              ) : null
+            )
+          )}
         </Stack>
+        <Card
+          variant="soft"
+          color="success"
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            py: 2,
+            minWidth: 256 + 64,
+          }}
+        >
+          <Typography level="h4">SparkPoker</Typography>
+          <Typography level="body-lg">
+            {appState.votingInProgress ? "Pick your cards" : "Start new voting"}
+          </Typography>
+          <Button
+            variant={allVoted ? "solid" : "soft"}
+            sx={{
+              transition: "transform 0.2s ease 0s",
+              transform: allVoted ? "scale(1.15)" : "scale(1)",
+            }}
+            onClick={
+              appState.votingInProgress ? handleRevealVoting : handleNewVoting
+            }
+          >
+            {appState.votingInProgress ? "Reveal Votes" : "New Voting"}
+          </Button>
+        </Card>
+
+        <Stack direction="row" gap={1} justifyContent={"space-evenly"}>
+          {players.map(([id, user], i) =>
+            i % 2 ? null : (
+              <PlayerAvatar
+                key={id}
+                player={user}
+                isActive={id === myId}
+                isRevealed={!appState.votingInProgress}
+              />
+            )
+          )}
+          {!iAmPlayer && (
+            <Box>
+              <Tooltip title={"Sit as player"}>
+                <IconButton
+                  variant="soft"
+                  color="primary"
+                  sx={{
+                    height: 96,
+                    px: 2,
+                    borderRadius: 100,
+                  }}
+                  onClick={() => {
+                    sendMessage(createChangeRoleActionMessage("player"));
+                  }}
+                >
+                  <AddIcon />
+                </IconButton>
+              </Tooltip>
+              <Box sx={{ height: 128 - 96, visibility: "hidden" }} />
+            </Box>
+          )}
+        </Stack>
+      </Stack>
+      <Stack flex={1} justifyContent={"end"}>
         {iAmPlayer ? (
           <PlayingCards
             appState={appState}
@@ -181,6 +181,6 @@ export const PokerGame = ({ appState, sendMessage, myId }: Props) => {
           <SpectatorPlayingCards appState={appState} />
         )}
       </Stack>
-    </>
+    </Stack>
   );
 };
