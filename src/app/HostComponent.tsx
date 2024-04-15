@@ -12,7 +12,6 @@ import { v4 as uuidv4 } from "uuid";
 import { ServerContext } from "../ServerProvider/ServerContext";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { InfoOutlined } from "@mui/icons-material";
 import { useForm, Controller } from "react-hook-form";
 import {
   AllowedValuesInput,
