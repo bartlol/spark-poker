@@ -25,14 +25,8 @@ export const App = () => {
     <CssVarsProvider>
       <CssBaseline />
       <ServerContextProvider>
-        <Container maxWidth={"sm"}>
-          <Stack
-            height="100vh"
-            justifyContent={"space-around"}
-            sx={{
-              py: 4,
-            }}
-          >
+        <Container maxWidth={"xs"}>
+          <Stack height="100vh" justifyContent={"space-around"}>
             <RouterProvider router={router} />
           </Stack>
         </Container>

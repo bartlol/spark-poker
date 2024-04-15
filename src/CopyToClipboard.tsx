@@ -1,8 +1,7 @@
 import { Button } from "@mui/joy";
 import { useState } from "react";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import DoneIcon from "@mui/icons-material/Done";
-
+import PersonAddAlt1OutlinedIcon from "@mui/icons-material/PersonAddAlt1Outlined";
 export const CopyToClipboard = () => {
   const [copied, setCopied] = useState<boolean>(false);
 
@@ -12,8 +11,8 @@ export const CopyToClipboard = () => {
         minWidth: "128px",
       }}
       color={copied ? "success" : "primary"}
-      variant={copied ? "soft" : "solid"}
-      startDecorator={copied ? <DoneIcon /> : <ContentCopyIcon />}
+      variant={copied ? "soft" : "outlined"}
+      startDecorator={copied ? <DoneIcon /> : <PersonAddAlt1OutlinedIcon />}
       onClick={
         copied
           ? undefined
@@ -26,7 +25,7 @@ export const CopyToClipboard = () => {
             }
       }
     >
-      {copied ? "Done" : "Copy link"}
+      {copied ? "Link copied!" : "Invite players"}
     </Button>
   );
 };

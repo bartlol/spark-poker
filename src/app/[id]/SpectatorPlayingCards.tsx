@@ -20,6 +20,7 @@ export const SpectatorPlayingCards = ({ appState }: Props) => {
           key={value}
           variant={"outlined"}
           sx={{
+            width: "3rem",
             py: 4,
           }}
         >

@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Card,
   IconButton,
@@ -20,6 +21,7 @@ import {
   createChangeRoleActionMessage,
 } from "../../ServerProvider/messages";
 import { CopyToClipboard } from "../../CopyToClipboard";
+import { useCallback } from "react";
 
 type Props = {
   appState: AppState;
@@ -30,13 +32,25 @@ type Props = {
 export const PokerGame = ({ appState, sendMessage, myId }: Props) => {
   const iAmPlayer = appState.players[myId] !== undefined;
   const players = Object.entries(appState.players);
+  const allVoted =
+    players.filter((player) => player[1].currentVote !== null).length ===
+    players.length;
+
+  const handleRevealVoting = useCallback(
+    () => sendMessage(createRevealVotesActionMessage()),
+    [sendMessage]
+  );
+  const handleNewVoting = useCallback(
+    () => sendMessage(createNewVotingActionMessage()),
+    [sendMessage]
+  );
 
   return (
     <>
-      <Stack direction="row" justifyContent={"space-around"}>
-        <CopyToClipboard />
-      </Stack>
+      {/* <Stack direction="row-reverse"> */}
+      {/* </Stack> */}
 
+      <CopyToClipboard />
       <Stack gap={1} alignItems={"center"}>
         <Sheet
           variant="soft"
@@ -61,8 +75,9 @@ export const PokerGame = ({ appState, sendMessage, myId }: Props) => {
                   variant="soft"
                   color="warning"
                   sx={{
-                    height: 64 + 32,
+                    height: 80,
                     px: 2,
+                    borderRadius: 100,
                   }}
                   onClick={() => {
                     sendMessage(createChangeRoleActionMessage("spectator"));
@@ -98,28 +113,23 @@ export const PokerGame = ({ appState, sendMessage, myId }: Props) => {
               display: "flex",
               alignItems: "center",
               py: 4,
-              minWidth: 256,
+              minWidth: 256 + 32,
             }}
           >
             <Typography level="h4">SparkPoker</Typography>
-            Pick your cards
-            {appState.votingInProgress ? (
-              <Button
-                onClick={() => {
-                  sendMessage(createRevealVotesActionMessage());
-                }}
-              >
-                Reveal Votes
-              </Button>
-            ) : (
-              <Button
-                onClick={() => {
-                  sendMessage(createNewVotingActionMessage());
-                }}
-              >
-                New Voting
-              </Button>
-            )}
+            {appState.votingInProgress ? "Pick your cards" : "Start new voting"}
+            <Button
+              variant={allVoted ? "solid" : "soft"}
+              sx={{
+                transition: "transform 0.2s ease 0s",
+                transform: allVoted ? "scale(1.15)" : "scale(1)",
+              }}
+              onClick={
+                appState.votingInProgress ? handleRevealVoting : handleNewVoting
+              }
+            >
+              {appState.votingInProgress ? "Reveal Votes" : "New Voting"}
+            </Button>
           </Card>
 
           <Stack direction="row" gap={1} justifyContent={"space-evenly"}>
@@ -134,22 +144,25 @@ export const PokerGame = ({ appState, sendMessage, myId }: Props) => {
               )
             )}
             {!iAmPlayer && (
-              <Tooltip title={"Sit as player"}>
-                <IconButton
-                  variant="soft"
-                  color="primary"
-                  sx={{
-                    minHeight: 64 + 32,
-                    px: 2,
-                    borderRadius: 100,
-                  }}
-                  onClick={() => {
-                    sendMessage(createChangeRoleActionMessage("player"));
-                  }}
-                >
-                  <AddIcon />
-                </IconButton>
-              </Tooltip>
+              <Box>
+                <Tooltip title={"Sit as player"}>
+                  <IconButton
+                    variant="soft"
+                    color="primary"
+                    sx={{
+                      height: 96,
+                      px: 2,
+                      borderRadius: 100,
+                    }}
+                    onClick={() => {
+                      sendMessage(createChangeRoleActionMessage("player"));
+                    }}
+                  >
+                    <AddIcon />
+                  </IconButton>
+                </Tooltip>
+                <Box sx={{ height: 128 - 96, visibility: "hidden" }} />
+              </Box>
             )}
           </Stack>
         </Stack>
