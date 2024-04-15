@@ -21,15 +21,18 @@ import { Controller, useForm } from "react-hook-form";
 import { NewPlayerInput, newPlayerSchema } from "../../inputSchemas/newPlayer";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InfoOutlined } from "@mui/icons-material";
+import { usePersistentPlayerName } from "../../hooks/usePersistentPlayerName";
 
 type Props = {
   serverId: string;
 };
 
 export const PokerClient = ({ serverId }: Props) => {
+  const { playerName, persistPlayerName } = usePersistentPlayerName();
+
   const { handleSubmit, control } = useForm<NewPlayerInput>({
     defaultValues: {
-      name: "",
+      name: playerName,
     },
     resolver: zodResolver(newPlayerSchema),
   });
@@ -45,6 +48,12 @@ export const PokerClient = ({ serverId }: Props) => {
   const connected = connection.current !== null;
   const nameChosen = chosenName !== "";
 
+  const onSubmit = (role: UserRole) => (data: NewPlayerInput) => {
+    persistPlayerName(data.name);
+    connection.current?.send(createEnterGameActionMessage(data.name, role));
+    setChosenName(data.name);
+  };
+
   if (connected && nameChosen && appState) {
     return (
       <PokerGame
@@ -55,12 +64,8 @@ export const PokerClient = ({ serverId }: Props) => {
     );
   }
 
-  const onSubmit = (role: UserRole) => (data: NewPlayerInput) => {
-    connection.current?.send(createEnterGameActionMessage(data.name, role));
-    setChosenName(data.name);
-  };
   return (
-    <Stack component={"form"} alignContent={"center"}>
+    <Stack alignContent={"center"}>
       <Card>
         <Typography level="h3">Join room</Typography>
         <Controller

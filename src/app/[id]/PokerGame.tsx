@@ -11,7 +11,7 @@ import { PlayingCards } from "./PlayingCards";
 import { SpectatorPlayingCards } from "./SpectatorPlayingCards";
 import AddIcon from "@mui/icons-material/Add";
 import { SpectatorAvatar } from "./SpectatorAvatar";
-import { PlayerAvatar } from "./PlayerAvatar";
+import { DummyPlayerAvatar, PlayerAvatar } from "./PlayerAvatar";
 import {
   AppState,
   ClientAction,
@@ -29,25 +29,12 @@ type Props = {
 
 export const PokerGame = ({ appState, sendMessage, myId }: Props) => {
   const iAmPlayer = appState.players[myId] !== undefined;
+  const players = Object.entries(appState.players);
+
   return (
     <>
       <Stack direction="row" justifyContent={"space-around"}>
         <CopyToClipboard />
-
-        <Button
-          onClick={() => {
-            sendMessage(createNewVotingActionMessage());
-          }}
-        >
-          New Voting
-        </Button>
-        <Button
-          onClick={() => {
-            sendMessage(createRevealVotesActionMessage());
-          }}
-        >
-          Reveal Votes
-        </Button>
       </Stack>
 
       <Stack gap={1} alignItems={"center"}>
@@ -89,15 +76,19 @@ export const PokerGame = ({ appState, sendMessage, myId }: Props) => {
         </Sheet>
         <Stack sx={{ p: 1 }} gap={1}>
           <Stack direction="row" gap={1} justifyContent={"space-evenly"}>
-            {Object.entries(appState.players).map(([id, user], i) =>
-              i % 2 ? (
-                <PlayerAvatar
-                  key={id}
-                  player={user}
-                  isActive={id === myId}
-                  isRevealed={!appState.votingInProgress}
-                />
-              ) : null
+            {players.length < 2 ? (
+              <DummyPlayerAvatar />
+            ) : (
+              players.map(([id, user], i) =>
+                i % 2 ? (
+                  <PlayerAvatar
+                    key={id}
+                    player={user}
+                    isActive={id === myId}
+                    isRevealed={!appState.votingInProgress}
+                  />
+                ) : null
+              )
             )}
           </Stack>
           <Card
@@ -111,11 +102,28 @@ export const PokerGame = ({ appState, sendMessage, myId }: Props) => {
             }}
           >
             <Typography level="h4">SparkPoker</Typography>
-            Pick your cards Voting in progress?:{" "}
-            {JSON.stringify(appState.votingInProgress)}
+            Pick your cards
+            {appState.votingInProgress ? (
+              <Button
+                onClick={() => {
+                  sendMessage(createRevealVotesActionMessage());
+                }}
+              >
+                Reveal Votes
+              </Button>
+            ) : (
+              <Button
+                onClick={() => {
+                  sendMessage(createNewVotingActionMessage());
+                }}
+              >
+                New Voting
+              </Button>
+            )}
           </Card>
+
           <Stack direction="row" gap={1} justifyContent={"space-evenly"}>
-            {Object.entries(appState.players).map(([id, user], i) =>
+            {players.map(([id, user], i) =>
               i % 2 ? null : (
                 <PlayerAvatar
                   key={id}

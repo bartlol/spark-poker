@@ -1,4 +1,4 @@
-import { Card, Typography } from "@mui/joy";
+import { Card, Stack, Typography } from "@mui/joy";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { AppState } from "../../ServerProvider/messages";
 type Props = {
@@ -8,8 +8,14 @@ type Props = {
 export const SpectatorAvatar = ({ user, isActive }: Props) => {
   return (
     <Card variant="soft" color={isActive ? "warning" : "warning"}>
-      <RemoveRedEyeIcon />
-      <Typography>{user.name}</Typography>
+      <Stack
+        alignItems={"center"}
+        justifyContent={"space-evenly"}
+        height="100%"
+      >
+        <RemoveRedEyeIcon />
+        <Typography>{user.name}</Typography>
+      </Stack>
     </Card>
   );
 };

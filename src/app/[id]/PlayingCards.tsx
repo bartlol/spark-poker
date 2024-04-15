@@ -36,6 +36,7 @@ export const PlayingCards = ({ appState, sendMessage, myId }: Props) => {
             sendMessage(message);
           }}
           sx={{
+            width: "3rem",
             py: 4,
             transition: "transform 0.2s ease 0s",
             ":hover": {

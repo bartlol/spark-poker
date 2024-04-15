@@ -18,11 +18,14 @@ import {
   AllowedValuesInput,
   allowedValuesInputSchema,
 } from "../inputSchemas/allowedValues";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { usePersistentAllowedValues } from "../hooks/usePersistentAllowedValues";
 
 export const HostComponent = () => {
+  const { allowedValues, persistAllowedValues } = usePersistentAllowedValues();
   const { handleSubmit, control, formState } = useForm<AllowedValuesInput>({
     defaultValues: {
-      values: "1,2,4,8,16",
+      values: allowedValues,
     },
     resolver: zodResolver(allowedValuesInputSchema),
   });
@@ -30,6 +33,7 @@ export const HostComponent = () => {
   const navigate = useNavigate();
 
   const onSubmit = (data: AllowedValuesInput) => {
+    persistAllowedValues(data.values);
     const parsedValues = data.values.split(",").map(Number);
     const roomId = uuidv4();
     console.log("Creating room with id", roomId);
@@ -50,7 +54,7 @@ export const HostComponent = () => {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: 2,
+        gap: 3,
         borderRadius: 8,
       }}
     >
@@ -61,24 +65,26 @@ export const HostComponent = () => {
         name="values"
         render={({ field, fieldState }) => (
           <FormControl error={fieldState.invalid}>
-            <FormLabel>Values</FormLabel>
+            <FormLabel>Deck values</FormLabel>
             <Input
               error={fieldState.invalid}
               onChange={field.onChange}
               value={field.value}
             />
-            {fieldState.invalid && (
-              <FormHelperText>
-                <InfoOutlined />
-                {fieldState.error?.message}
-              </FormHelperText>
-            )}
+            <FormHelperText
+              sx={{
+                color: "primary",
+              }}
+            >
+              <InfoOutlinedIcon fontSize="small" sx={{ mr: 1 }} />
+              Enter numbers separated by commas.
+            </FormHelperText>
           </FormControl>
         )}
       />
 
       <Button onClick={handleSubmit(onSubmit, onError)} size="lg">
-        Create new room
+        Create game
       </Button>
     </Sheet>
   );
